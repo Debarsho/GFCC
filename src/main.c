@@ -87,7 +87,7 @@ int main (int argc , char *argv[]) {
 
 	int file_failures = 0;
 	for (int i = 0; i < total_files; i++) {
-		// OPEN FILE	
+		// OPEN FILE
 		yyin = fopen(argv[start + i], "r");
 		if (!yyin) {
 			printf(i > 0 ? "\n" : "");
@@ -97,18 +97,15 @@ int main (int argc , char *argv[]) {
 		}
 
 		if ( o_flag_index >= 0 ) {
-
-			temp_out = fopen(argv[o_flag_index + i + 1], "w");
-			if(!temp_out){
+			if (! (temp_out = fopen(argv[o_flag_index + i + 1], "w")) ) {
 			printf(i > 0 ? "\n" : "");
 			lex_warn("Problem writing to file \"%s\". Skipping it.\n", argv[o_flag_index + i + 1]);
 			file_failures++;
 			continue;}
 
 			fileName = argv[o_flag_index + i + 1];
-		} 
-		else 
-		{
+
+		} else {
 			int len = strlen(argv[start + i]);
 			char out_file_name[len + 5]; strcpy(out_file_name, argv[start + i]);
 
@@ -129,16 +126,17 @@ int main (int argc , char *argv[]) {
 			fileName = strdup(argv[start + i]);
 		}
 
-		fprintf(temp_out, "digraph {\n");
-
 		// PostScript OK. Try to adjust for actual PDF (although not required).
-		// fprintf(temp_out, "\tsize=\"8.25,11.75!\" ratio = \"fit\";\n\n");
 
 		int parse_return = yyparse();
 
 		printf("yyparse() = %d\n", parse_return);
 
-		// fprintf(temp_out, "}\n");
+		if (!parse_return) AstToDot(temp_out, AstRoot);
+
+		temp_out = NULL; // reset for next file
+
+
 		// if (!temp_out) {
 		// 	printf(i > 0 ? "\n" : "");
 		// 	printf("Token Stream for file \"%s\":\n", argv[start + i]);
@@ -195,10 +193,6 @@ int main (int argc , char *argv[]) {
 
 		// // TRY USING THIS FOR PRINTING IN LEXICAL ANALYSIS TOO
 		// fprintTokens(temp_out ? temp_out : stdout, tok_str, (unsigned long int) total_tokens, brief);
-
-		if (!parse_return) AstToDot(temp_out, AstRoot);
-
-		temp_out = NULL; // reset for next file
 	}
 
 	return file_failures;

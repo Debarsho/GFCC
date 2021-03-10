@@ -128,8 +128,6 @@ int yylex();
 
 int yyerror(char*);
 
-void dotStmt(const char*, ...);
-
 void dotNode(FILE *, node_t*);
 
 void dotEdge(FILE *, node_t*, edge_t*);
@@ -158,8 +156,6 @@ node_t* mkOpNode(node_t*, int, int, ...);
 extern node_t* (*op)(node_t*, int, int, ...); // short form
 
 // void ASTToDot(FILE*, node_t*); // temp_out, root
-
-char* cat(char*, char*);
 
 int Enqueue(node_t *);
 
